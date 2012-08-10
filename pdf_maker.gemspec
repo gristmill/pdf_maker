@@ -7,16 +7,23 @@ require "pdf_maker/version"
 Gem::Specification.new do |s|
   s.name        = "pdf_maker"
   s.version     = PdfMaker::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of PdfMaker."
-  s.description = "TODO: Description of PdfMaker."
+  s.authors     = ["Sean Behan"]
+  s.email       = ["inbox@seanbehan.com"]
+  s.homepage    = "http://github.com/gristmill/pdf_maker"
+  s.summary     = "PdfMaker builds PDFs from Rails templates."
+  s.description = "Turn your Rails actions/views into PDFs without a web browser"
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", "~> 3.2.7"
-
+  s.add_dependency "pdfkit", "~> 0.5.2"
+  s.add_dependency "sprockets", "~> 2.1.3"
+  s.add_dependency "sass", "~> 3.1.20"
+  s.add_dependency 'wkhtmltopdf-binary', "~> 0.9.9.1"
+  s.add_dependency 'sass-rails',   '~> 3.2.3'
+  s.add_dependency 'coffee-rails', '~> 3.2.1'
+  s.add_dependency 'therubyracer', '~> 0.9.10'
+  s.add_dependency 'uglifier', '>= 1.0.3'
   s.add_development_dependency "sqlite3"
 end
