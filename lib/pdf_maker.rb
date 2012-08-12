@@ -14,72 +14,55 @@ module PdfMaker
 
     self.view_paths = "."
 
-    attr_accessor :pdf
-    attr_accessor :view
+    attr_accessor :pdf, :view
 
-    helper_method :pdf_assets
+    helper_method :pdf_maker_assets_tag
 
-    def pdf_assets
-      env = Sprockets::Environment.new
-
-      Rails.application.assets.paths.each { |asset_path| env.append_path asset_path }
-
-      x = "<style>#{env['application.css']}</style> <script>#{env['application.js']}</script>"
-      puts x
-      raw(x)
-    end
-
-    # PdfMaker.new do
-    #
-    #   view 'users/profile'
-    #   layout 'pdf_layout.html.erb'
-    #
-    #   context do
-    #     @message = "Hello World"
-    #   end
-    #
-    #   methods do
-    #     current_user = nil
-    #   end
-    #
-    # end
-    # def view
-    #   @view
-    # end
-    #
-    # def view=(view)
-    #   @view = view
-    # end
     def initialize(&block)
       instance_eval(&block)
-
-      @options ||= {}
-
-      if @layout
-        @options.merge({layout: @layout})
-      end
-
-      @pdf = PDFKit.new(render(@view, @options))
+      @pdf = PDFKit.new(render(@renders, options))
     end
 
     def layout(layout=nil)
-      if @layout && layout.nil?
-        @layout
-      else
-        @layout = layout
+      return @layout if defined?(@layout)
+      @layout = layout
+    end
+    
+    def options
+      @options ||= {}
+      @options.merge({layout: layout})
+    end
+
+    def renders(renders=nil)
+      return @renders if defined?(@renders)
+      @renders = renders
+    end
+
+    def method(key,value)
+      self.class.instance_eval do
+        helper_method key
+        define_method key do
+          value
+        end
       end
     end
 
-    def view(view=nil)
-      if @view && view.nil?
-        @view
-      else
-        @view = view
-      end
+    def variable(key,value)
+      instance_variable_set("@#{key}", value)
+      self.class.instance_eval { attr_accessor key }
     end
 
     def to_file(path)
       @pdf.to_file(path)
     end
+
+    def pdf_maker_assets_tag
+      env = Sprockets::Environment.new
+
+      Rails.application.assets.paths.each { |asset_path| env.append_path asset_path }
+
+      raw "<style>#{env['application.css']}</style> <script>#{env['application.js']}</script>"
+    end
+
   end
 end

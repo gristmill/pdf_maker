@@ -1,3 +1,2 @@
 $ ->
-
-  $('body').html("HELLO WORLD!")
+  $('body').append("HELLO WORLD!")
