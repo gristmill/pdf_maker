@@ -15,6 +15,7 @@ module PdfMaker
     self.view_paths = "."
 
     attr_accessor :pdf
+    attr_accessor :view
 
     helper_method :pdf_assets
 
@@ -28,15 +29,53 @@ module PdfMaker
       raw(x)
     end
 
-    # PDFMaker.new(view: 'users/profile', locals: {}, ivars: {user: User.find(pk)}, layout: 'application')
-    def initialize(*options)
-      @options = options.extract_options!
+    # PdfMaker.new do
+    #
+    #   view 'users/profile'
+    #   layout 'pdf_layout.html.erb'
+    #
+    #   context do
+    #     @message = "Hello World"
+    #   end
+    #
+    #   methods do
+    #     current_user = nil
+    #   end
+    #
+    # end
+    # def view
+    #   @view
+    # end
+    #
+    # def view=(view)
+    #   @view = view
+    # end
+    def initialize(&block)
+      instance_eval(&block)
 
-      @view = @options[:view]
+      @options ||= {}
 
-      (@options[:ivars] || {}).each { |k,v| instance_variable_set("@#{k}", v)}
+      if @layout
+        @options.merge({layout: @layout})
+      end
 
       @pdf = PDFKit.new(render(@view, @options))
+    end
+
+    def layout(layout=nil)
+      if @layout && layout.nil?
+        @layout
+      else
+        @layout = layout
+      end
+    end
+
+    def view(view=nil)
+      if @view && view.nil?
+        @view
+      else
+        @view = view
+      end
     end
 
     def to_file(path)
