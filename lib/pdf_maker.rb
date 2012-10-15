@@ -12,8 +12,6 @@ module PdfMaker
     include ActionView::Helpers::OutputSafetyHelper
     include ActionView::Helpers::TextHelper
 
-    self.view_paths = "."
-
     attr_accessor :pdf, :view
 
     helper_method :pdf_maker_assets_tag
@@ -27,7 +25,7 @@ module PdfMaker
       return @layout if defined?(@layout)
       @layout = layout
     end
-    
+
     def options
       @options ||= {}
       @options.merge({layout: layout})
@@ -54,6 +52,14 @@ module PdfMaker
 
     def to_file(path)
       @pdf.to_file(path)
+    end
+
+    def view_paths(path=".")
+      self.class.view_paths = path
+    end
+
+    def helpers(helpers)
+      helpers.map { |helper| self.class.send(:helper, helper) }
     end
 
     def pdf_maker_assets_tag
