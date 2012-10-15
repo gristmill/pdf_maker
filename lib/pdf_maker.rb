@@ -58,6 +58,10 @@ module PdfMaker
       self.class.view_paths = path
     end
 
+    def helpers(helpers)
+      helpers.map { |helper| self.class.send(:helper, helper) }
+    end
+
     def pdf_maker_assets_tag
       env = Sprockets::Environment.new
 
